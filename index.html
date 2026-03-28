@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Autoniv — AI Voice Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root{
+  --bg:#070b10;--bg2:#0d1219;--s1:#111820;--s2:#171f2c;--s3:#1d2838;
+  --b1:rgba(255,255,255,.06);--b2:rgba(255,255,255,.11);--b3:rgba(255,255,255,.18);
+  --blue:#1e8ef0;--blue2:#0d6ec7;--teal:#0fcfb0;--green:#22c97a;--green2:#17a362;
+  --amber:#fbbf24;--red:#f87171;
+  --grad:linear-gradient(135deg,#1e8ef0,#0fcfb0,#22c97a);
+  --text:#eef2f8;--m1:#8895a7;--m2:#4a5568;--m3:#2d3748;
+  --fh:'Outfit',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--m3);border-radius:4px;}
+
+/* ─── UTILS ──────────────────────────────────────── */
+.gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:var(--r8);font-size:13.5px;font-weight:600;font-family:var(--fb);cursor:pointer;border:none;transition:all .18s;text-decoration:none;white-space:nowrap;}
+.btn-p{background:var(--grad);background-size:200%;color:#fff;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(30,142,240,.3);}
+.btn-o{background:transparent;color:var(--text);border:1px solid var(--b2);}
+.btn-o:hover{background:var(--s2);border-color:var(--blue);}
+.btn-g{background:transparent;color:var(--m1);border:1px solid var(--b1);}
+.btn-g:hover{background:var(--s2);color:var(--text);}
+.btn-sm{padding:7px 14px;font-size:12.5px;}
+.btn-xs{padding:5px 11px;font-size:11.5px;}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);}
+.page{display:none;}
+.page.on{display:block;}
+
+/* ─── CONFIG BANNER ──────────────────────────────── */
+#cfg-banner{background:linear-gradient(90deg,rgba(30,142,240,.15),rgba(15,207,176,.1));border-bottom:1px solid rgba(30,142,240,.25);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;font-size:13px;gap:12px;flex-wrap:wrap;}
+#cfg-banner span{color:var(--m1);}
+#cfg-banner strong{color:var(--amber);}
+.cfg-inputs{display:flex;gap:8px;flex-wrap:wrap;}
+.cfg-inp{background:var(--bg2);border:1px solid var(--b2);border-radius:6px;padding:6px 12px;font-size:12px;color:var(--text);font-family:var(--fb);width:260px;outline:none;}
+.cfg-inp:focus{border-color:var(--blue);}
+.cfg-inp::placeholder{color:var(--m2);}
+
+/* ════════════════════════════════════════════════════
+   LANDING PAGE
+════════════════════════════════════════════════════ */
+.lnav{position:sticky;top:0;z-index:200;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:rgba(7,11,16,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--b1);}
+.lnav-links{display:flex;gap:28px;}
+.lnav-links a{font-size:13.5px;color:var(--m1);text-decoration:none;font-weight:500;transition:color .15s;}
+.lnav-links a:hover{color:var(--text);}
+.logo-row{display:flex;align-items:center;gap:9px;cursor:pointer;}
+.logo-name{font-family:var(--fh);font-size:19px;font-weight:800;letter-spacing:-.3px;}
+
+.hero{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 6% 70px;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;width:800px;height:800px;border-radius:50%;left:50%;top:42%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(30,142,240,.11) 0%,rgba(15,207,176,.05) 45%,transparent 72%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:55px 55px;mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,black 25%,transparent 100%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px 5px 7px;border-radius:100px;border:1px solid rgba(30,142,240,.28);background:rgba(30,142,240,.07);font-size:12px;font-weight:600;color:var(--blue);margin-bottom:24px;animation:fu .6s ease both;}
+.hbdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;}
+@keyframes fu{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{font-family:var(--fh);font-size:clamp(38px,6vw,78px);font-weight:900;line-height:1.04;letter-spacing:-2px;margin-bottom:20px;animation:fu .65s .08s ease both;}
+.hero p{font-size:clamp(14px,1.7vw,18px);color:var(--m1);max-width:540px;line-height:1.78;margin-bottom:32px;animation:fu .65s .16s ease both;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fu .65s .22s ease both;}
+.hero-stats{display:flex;gap:44px;margin-top:60px;padding-top:36px;border-top:1px solid var(--b1);animation:fu .65s .3s ease both;flex-wrap:wrap;justify-content:center;}
+.hstat-n{font-family:var(--fh);font-size:30px;font-weight:800;line-height:1;}
+.hstat-l{font-size:12px;color:var(--m1);margin-top:4px;}
+
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:50px;}
+.fc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:26px;transition:all .22s;}
+.fc:hover{border-color:rgba(30,142,240,.3);transform:translateY(-3px);}
+.fc-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.fc-ico svg{width:20px;height:20px;}
+.fc h3{font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:7px;}
+.fc p{font-size:13.5px;color:var(--m1);line-height:1.65;}
+
+.ind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;}
+.ic{border:1px solid var(--b1);border-radius:var(--r12);padding:20px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:all .18s;background:var(--s1);}
+.ic:hover{border-color:rgba(15,207,176,.35);background:var(--s2);}
+.ic-e{font-size:26px;width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--s2);flex-shrink:0;}
+
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px;}
+.pc{border:1px solid var(--b1);border-radius:18px;padding:28px;background:var(--s1);position:relative;transition:border-color .2s;}
+.pc.pop{border-color:var(--blue);background:linear-gradient(155deg,rgba(30,142,240,.07),var(--s1));}
+.pc.pop::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:10.5px;font-weight:700;padding:3px 13px;border-radius:100px;}
+.pc-price{font-family:var(--fh);font-size:36px;font-weight:900;line-height:1;margin:14px 0 3px;}
+.pc-feat{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--m1);margin-bottom:9px;}
+.pc-feat svg{width:14px;height:14px;color:var(--green);flex-shrink:0;}
+
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;}
+.tc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:22px;}
+.tc-text{font-size:13.5px;color:var(--m1);line-height:1.7;margin-bottom:16px;}
+.tc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:13px;font-weight:700;}
+
+.cta-box{background:linear-gradient(130deg,rgba(30,142,240,.1),rgba(15,207,176,.07),rgba(34,201,122,.08));border:1px solid rgba(30,142,240,.22);border-radius:22px;padding:66px 36px;text-align:center;}
+
+.sec{padding:80px 6%;}
+.sec-lbl{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px;}
+.sec-title{font-family:var(--fh);font-size:clamp(26px,3.8vw,46px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:14px;}
+.sec-sub{font-size:15.5px;color:var(--m1);max-width:500px;line-height:1.72;}
+
+footer{background:var(--bg2);border-top:1px solid var(--b1);padding:48px 6% 28px;}
+.footer-g{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;margin-bottom:36px;}
+.footer-col h4{font-family:var(--fh);font-size:13px;font-weight:700;margin-bottom:13px;}
+.footer-col a{display:block;font-size:13px;color:var(--m1);text-decoration:none;margin-bottom:8px;transition:color .15s;}
+.footer-col a:hover{color:var(--text);}
+.footer-bot{border-top:1px solid var(--b1);padding-top:22px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--m3);}
+
+/* ════════════════════════════════════════════════════
+   DASHBOARD LAYOUT
+════════════════════════════════════════════════════ */
+.db-wrap{display:flex;min-height:100vh;}
+.db-side{width:232px;background:var(--bg2);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+.db-logo{padding:20px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:9px;}
+.db-nav{padding:14px 10px;flex:1;}
+.db-sec-lbl{font-size:9.5px;font-weight:700;color:var(--m3);letter-spacing:1.3px;text-transform:uppercase;padding:0 8px;margin:14px 0 5px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--m1);transition:all .14s;margin-bottom:2px;}
+.ni:hover{background:var(--s2);color:var(--text);}
+.ni.on{background:rgba(30,142,240,.12);color:var(--blue);font-weight:600;}
+.ni svg{width:15px;height:15px;flex-shrink:0;}
+.ni-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 6px;border-radius:100px;}
+.db-foot{padding:12px 10px;border-top:1px solid var(--b1);}
+.db-user{display:flex;align-items:center;gap:9px;padding:7px;border-radius:8px;cursor:pointer;}
+.db-user:hover{background:var(--s2);}
+.db-av{width:30px;height:30px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:12px;font-weight:700;flex-shrink:0;}
+
+.db-main{margin-left:232px;flex:1;min-height:100vh;display:flex;flex-direction:column;}
+.db-top{height:60px;background:var(--bg2);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:50;}
+.db-title{font-family:var(--fh);font-size:18px;font-weight:800;}
+.db-bc{font-size:11px;color:var(--m1);margin-top:2px;}
+.db-top-r{display:flex;align-items:center;gap:9px;}
+.db-content{padding:26px;flex:1;}
+.sub{display:none;}
+.sub.on{display:block;}
+
+/* ─── STAT CARDS ──────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.sc{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r12);padding:18px;position:relative;overflow:hidden;}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc.bl::after{background:var(--blue);}
+.sc.gr::after{background:var(--green);}
+.sc.tl::after{background:var(--teal);}
+.sc.am::after{background:var(--amber);}
+.sc-lbl{font-size:11px;font-weight:600;color:var(--m1);letter-spacing:.3px;margin-bottom:7px;}
+.sc-val{font-family:var(--fh);font-size:26px;font-weight:800;line-height:1;margin-bottom:5px;}
+.sc-ch{font-size:11px;display:flex;align-items:center;gap:3px;}
+.sc-ch.up{color:var(--green);}
+.sc-ch.dn{color:var(--red);}
+.sc-ico{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+
+/* ─── 2-COL LAYOUT ────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-bottom:20px;}
+.ch{padding:15px 18px 13px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;}
+.ct{font-family:var(--fh);font-size:13.5px;font-weight:700;}
+.cb{padding:16px 18px;}
+
+/* ─── CHART ────────────────────────────────────────── */
+.bars{display:flex;align-items:flex-end;gap:5px;height:74px;}
+.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bar{width:100%;border-radius:3px 3px 0 0;cursor:pointer;transition:opacity .18s;}
+.bar:hover{opacity:.65;}
+.bl2{font-size:9.5px;color:var(--m3);}
+
+/* ─── TABLE ────────────────────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:10px;color:var(--m1);font-weight:600;text-align:left;padding:0 0 9px;letter-spacing:.5px;text-transform:uppercase;}
+.tbl td{padding:9px 0;border-top:1px solid var(--b1);font-size:12.5px;vertical-align:middle;}
+.tbl tr:hover td{background:rgba(255,255,255,.014);}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:10.5px;font-weight:500;}
+.pill.ok{background:rgba(34,201,122,.1);color:var(--green);}
+.pill.no{background:rgba(248,113,113,.1);color:var(--red);}
+.pill.ip{background:rgba(251,191,36,.1);color:var(--amber);}
+.pill-dot{width:4px;height:4px;border-radius:50%;background:currentColor;}
+
+/* ─── AGENTS ───────────────────────────────────────── */
+.ag{background:var(--s2);border:1px solid var(--b1);border-radius:9px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color .14s;margin-bottom:8px;}
+.ag:hover{border-color:var(--b2);}
+.ag.live{border-color:rgba(34,201,122,.32);}
+.ag-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;background:var(--s1);border:1px solid var(--b1);flex-shrink:0;}
+.ag-n{font-size:13px;font-weight:600;}
+.ag-t{font-size:11px;color:var(--m1);margin-top:1px;}
+.ag-r{margin-left:auto;text-align:right;}
+.live-p{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--green);}
+.live-d{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;}
+
+/* ─── LANG TOGGLES ─────────────────────────────────── */
+.lr{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);}
+.lr:last-child{border-bottom:none;}
+.tog{width:34px;height:19px;border-radius:10px;background:var(--m3);position:relative;cursor:pointer;transition:background .18s;flex-shrink:0;}
+.tog.on{background:var(--blue);}
+.tog-t{width:13px;height:13px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .18s;}
+.tog.on .tog-t{left:18px;}
+
+/* ─── CAMPAIGNS ────────────────────────────────────── */
+.cr{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--b1);}
+.cr:last-child{border-bottom:none;}
+.ci{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--s2);border:1px solid var(--b1);flex-shrink:0;}
+.pb{flex:1;height:4px;background:var(--s2);border-radius:2px;overflow:hidden;}
+.pf{height:100%;border-radius:2px;}
+
+/* ─── CREATE ASSISTANT ─────────────────────────────── */
+.ca-grid{display:grid;grid-template-columns:1fr 360px;gap:22px;}
+.ca-sec{padding:20px 22px;border-bottom:1px solid var(--b1);}
+.ca-sec:last-child{border-bottom:none;}
+.ca-st{font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:3px;}
+.ca-ss{font-size:11.5px;color:var(--m1);margin-bottom:16px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.fr.full{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fl{font-size:11.5px;font-weight:600;color:var(--m1);letter-spacing:.3px;}
+.fi{background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--text);font-family:var(--fb);outline:none;transition:border-color .18s;width:100%;}
+.fi:focus{border-color:var(--blue);}
+.fi::placeholder{color:var(--m3);}
+.fsel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;background-size:13px;padding-right:32px;}
+textarea.fi{resize:vertical;min-height:82px;line-height:1.6;}
+
+.pers-g{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.pc2{border:1px solid var(--b1);border-radius:9px;padding:11px;cursor:pointer;transition:all .17s;text-align:center;}
+.pc2:hover{border-color:var(--b2);}
+.pc2.sel{border-color:var(--blue);background:rgba(30,142,240,.08);}
+.pe{font-size:20px;margin-bottom:5px;}
+.pn{font-size:11.5px;font-weight:600;}
+.pd{font-size:10.5px;color:var(--m1);margin-top:2px;}
+
+.vc-g{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.vc{border:1px solid var(--b1);border-radius:9px;padding:11px 13px;cursor:pointer;transition:all .14s;display:flex;align-items:center;gap:9px;}
+.vc:hover{border-color:var(--b2);}
+.vc.sel{border-color:var(--teal);background:rgba(15,207,176,.07);}
+.vc-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.vc-n{font-size:12.5px;font-weight:600;}
+.vc-l{font-size:11px;color:var(--m1);}
+
+.phone-prev{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r16);padding:20px;position:sticky;top:80px;}
+.ph-frame{background:var(--bg);border:2px solid var(--b2);border-radius:26px;padding:14px;margin:14px 0;min-height:320px;display:flex;flex-direction:column;gap:9px;}
+.ph-notch{width:72px;height:18px;background:var(--bg2);border-radius:0 0 13px 13px;margin:0 auto 12px;}
+.cb2{padding:9px 13px;border-radius:13px;font-size:12px;line-height:1.55;max-width:84%;}
+.cb2.ai{background:linear-gradient(135deg,rgba(30,142,240,.15),rgba(15,207,176,.1));border:1px solid rgba(30,142,240,.18);align-self:flex-start;}
+.cb2.user{background:var(--s2);align-self:flex-end;border:1px solid var(--b1);}
+.cb2-name{font-size:9.5px;font-weight:700;color:var(--blue);margin-bottom:3px;}
+.prev-status{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;color:var(--m1);margin-top:6px;}
+.prev-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;}
+
+/* ─── CALL LOG ITEM ─────────────────────────────────── */
+.call-item{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:9px;transition:border-color .15s;}
+.call-item:hover{border-color:var(--b2);}
+.call-ico{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+
+/* ─── TOAST ─────────────────────────────────────────── */
+#toast{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;flex-direction:column;gap:9px;pointer-events:none;}
+.toast-item{background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:10px;pointer-events:auto;animation:slide-in .25s ease;min-width:260px;max-width:340px;}
+@keyframes slide-in{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.toast-item.ok{border-color:rgba(34,201,122,.35);}
+.toast-item.err{border-color:rgba(248,113,113,.35);}
+.toast-item.info{border-color:rgba(30,142,240,.35);}
+
+/* ─── SPINNER ───────────────────────────────────────── */
+.spin{width:16px;height:16px;border:2px solid var(--b2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ─── STATUS BADGE ──────────────────────────────────── */
+.sbadge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:100px;font-size:10.5px;font-weight:600;}
+.sbadge.live{background:rgba(34,201,122,.12);color:var(--green);}
+.sbadge.pause{background:rgba(255,255,255,.05);color:var(--m1);}
+.sbadge.draft{background:rgba(251,191,36,.1);color:var(--amber);}
+
+/* ─── KB UPLOAD ─────────────────────────────────────── */
+.kb-drop{border:2px dashed var(--b2);border-radius:11px;padding:26px;text-align:center;cursor:pointer;transition:border-color .18s;}
+.kb-drop:hover{border-color:var(--blue);}
+.kb-file{background:var(--bg2);border:1px solid var(--b1);border-radius:7px;padding:9px 12px;display:flex;align-items:center;gap:9px;font-size:12px;margin-top:8px;}
+
+/* ─── INTEGRATION STATUS ────────────────────────────── */
+.int-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--b1);}
+.int-row:last-child{border-bottom:none;}
+.int-logo{width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.int-name{font-size:13px;font-weight:600;}
+.int-desc{font-size:11px;color:var(--m1);margin-top:1px;}
+.conn-dot{width:8px;height:8px;border-radius:50%;}
+.conn-dot.on{background:var(--green);}
+.conn-dot.off{background:var(--m3);}
+</style>
+</head>
+<body>
+
+<!-- ═══ CONFIG BANNER ══════════════════════════════ -->
+<div id="cfg-banner">
+  <span>⚡ <strong>Add your API keys to go live</strong> — paste below and click Save</span>
+  <div class="cfg-inputs">
+    <input class="cfg-inp" id="inp-vapi"      placeholder="Vapi API Key (vapi-xxxxxxx)"      type="password"/>
+    <input class="cfg-inp" id="inp-vapiphone"  placeholder="Vapi Phone Number ID"             type="text"/>
+    <input class="cfg-inp" id="inp-supa-url"   placeholder="Supabase URL"                     type="text"/>
+    <input class="cfg-inp" id="inp-supa-key"   placeholder="Supabase Anon Key"                type="password"/>
+    <button class="btn btn-p btn-sm" onclick="saveConfig()">Save Keys</button>
+    <button class="btn btn-g btn-sm" onclick="document.getElementById('cfg-banner').style.display='none'">Hide</button>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast"></div>
+
+<!-- ═══ LANDING PAGE ══════════════════════════════ -->
+<div id="pg-land" class="page on">
+  <nav class="lnav">
+    <div class="logo-row" onclick="goPage('pg-land')">
+      <svg width="32" height="32" viewBox="0 0 80 80" fill="none">
+        <defs><linearGradient id="lg0" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1e8ef0"/><stop offset="50%" stop-color="#0fcfb0"/><stop offset="100%" stop-color="#22c97a"/></linearGradient></defs>
+        <path d="M40 8L68 68H52L40 40L28 68H12Z" fill="url(#lg0)"/>
+        <path d="M24 52Q40 30 56 52" stroke="#0fcfb0" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="52" cy="52" r="5" fill="#22c97a"/><circle cx="52" cy="52" r="2" fill="#fff"/>
+      </svg>
+      <span class="logo-name">AUTONIV</span>
+    </div>
+    <div class="lnav-links">
+      <a href="#features">Features</a><a href="#industries">Industries</a>
+      <a href="#pricing">Pricing</a><a href="#contact">Contact</a>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-o btn-sm" onclick="goPage('pg-dash')">Log In</button>
+      <button class="btn btn-p btn-sm" onclick="goPage('pg-dash')">Get Started Free</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div><div class="hero-grid"></div>
+    <div class="hero-badge"><div class="hbdot"></div>Now live · Hindi + English AI Calls</div>
+    <h1>AI Voice Agents<br/>That <span class="gt">Scale Your Business</span><br/>Automatically</h1>
+    <p>Autoniv deploys human-like AI voice agents for calls, lead qualification, appointments, collections — 24/7 in Hindi & English.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-p" style="padding:13px 26px;font-size:15px;" onclick="goPage('pg-dash')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Start Free
+      </button>
+      <button class="btn btn-o" style="padding:13px 26px;font-size:15px;" onclick="goPage('pg-dash')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        See Dashboard
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hstat-n gt">5.2M+</div><div class="hstat-l">Calls Automated</div></div>
+      <div><div class="hstat-n gt">83%</div><div class="hstat-l">AI Resolution Rate</div></div>
+      <div><div class="hstat-n gt">20+</div><div class="hstat-l">Languages</div></div>
+      <div><div class="hstat-n gt">&lt;330ms</div><div class="hstat-l">Response Latency</div></div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="sec" id="features">
+    <div class="sec-lbl">Why Autoniv</div>
+    <div class="sec-title">Everything your call team does,<br/><span class="gt">10x faster</span></div>
+    <div class="feat-grid">
+      <div class="fc"><div class="fc-ico" style="background:rgba(30,142,240,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div><h3>Human-like Voice AI</h3><p>Natural conversations under 330ms. Customers can't tell it's AI — in Hindi or English.</p></div>
+      <div class="fc"><div class="fc-ico" style="background:rgba(15,207,176,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Bulk Auto-Dialer</h3><p>Upload a CSV and launch campaigns to thousands of contacts instantly. Smart retry included.</p></div>
+      <div class="fc"><div class="fc-ico" style="background:rgba(34,201,122,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h3>Live Transcripts</h3><p>Every call transcribed, summarised, and saved automatically. Search any conversation.</p></div>
+      <div class="fc"><div class="fc-ico" style="background:rgba(251,191,36,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h3>Knowledge Base RAG</h3><p>Upload FAQs, SOPs, docs. AI answers from your exact data — no hallucinations.</p></div>
+      <div class="fc"><div class="fc-ico" style="background:rgba(30,142,240,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><h3>CRM Integrations</h3><p>Auto-sync with HubSpot, Salesforce, Zoho. Every call creates a lead automatically.</p></div>
+      <div class="fc"><div class="fc-ico" style="background:rgba(15,207,176,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h3>Smart Handoff</h3><p>AI transfers to human with full context — caller never has to repeat themselves.</p></div>
+    </div>
+  </section>
+
+  <!-- INDUSTRIES -->
+  <section class="sec" id="industries" style="padding-top:0;">
+    <div class="sec-lbl">Use Cases</div>
+    <div class="sec-title">Built for every <span class="gt">industry</span></div>
+    <div class="ind-grid">
+      <div class="ic"><div class="ic-e">🏥</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">Healthcare</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Appointments, reminders, follow-ups</div></div></div>
+      <div class="ic"><div class="ic-e">💰</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">Finance & Loans</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Lead qual, EMI reminders, KYC</div></div></div>
+      <div class="ic"><div class="ic-e">📦</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">Logistics</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Delivery confirmation, coordination</div></div></div>
+      <div class="ic"><div class="ic-e">🎓</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">EdTech</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Enrollment, demo class bookings</div></div></div>
+      <div class="ic"><div class="ic-e">🛒</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">E-Commerce</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Order updates, returns, support</div></div></div>
+      <div class="ic"><div class="ic-e">👔</div><div><div style="font-family:var(--fh);font-size:14px;font-weight:700;">HR & Recruitment</div><div style="font-size:12px;color:var(--m1);margin-top:2px;">Candidate screening, scheduling</div></div></div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="sec" id="pricing" style="padding-top:10px;text-align:center;">
+    <div class="sec-lbl">Pricing</div>
+    <div class="sec-title">Transparent <span class="gt">pricing</span></div>
+    <div class="price-grid" style="text-align:left;">
+      <div class="pc">
+        <div style="font-family:var(--fh);font-size:15px;font-weight:700;">Starter</div>
+        <div style="font-size:12px;color:var(--m1);margin-top:3px;">For small teams</div>
+        <div class="pc-price">₹999<span style="font-size:16px;font-weight:400;">/mo</span></div>
+        <div style="font-size:12px;color:var(--m1);margin-bottom:18px;">500 minutes</div>
+        <div style="height:1px;background:var(--b1);margin-bottom:16px;"></div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1 AI assistant</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Hindi + English</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Call transcripts</div>
+        <button class="btn btn-o" style="width:100%;justify-content:center;margin-top:20px;" onclick="goPage('pg-dash')">Get Started</button>
+      </div>
+      <div class="pc pop">
+        <div style="font-family:var(--fh);font-size:15px;font-weight:700;">Growth</div>
+        <div style="font-size:12px;color:var(--m1);margin-top:3px;">For growing businesses</div>
+        <div class="pc-price gt">₹4,999<span style="font-size:16px;font-weight:400;-webkit-text-fill-color:var(--m1);">/mo</span></div>
+        <div style="font-size:12px;color:var(--m1);margin-bottom:18px;">3,000 minutes</div>
+        <div style="height:1px;background:var(--b1);margin-bottom:16px;"></div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5 AI assistants</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Bulk campaigns</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>CRM integrations</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Knowledge base</div>
+        <button class="btn btn-p" style="width:100%;justify-content:center;margin-top:20px;" onclick="goPage('pg-dash')">Start Free Trial</button>
+      </div>
+      <div class="pc">
+        <div style="font-family:var(--fh);font-size:15px;font-weight:700;">Enterprise</div>
+        <div style="font-size:12px;color:var(--m1);margin-top:3px;">Large operations</div>
+        <div class="pc-price">Custom</div>
+        <div style="font-size:12px;color:var(--m1);margin-bottom:18px;">Unlimited minutes</div>
+        <div style="height:1px;background:var(--b1);margin-bottom:16px;"></div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Unlimited assistants</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1000 concurrent calls</div>
+        <div class="pc-feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support</div>
+        <button class="btn btn-o" style="width:100%;justify-content:center;margin-top:20px;">Contact Sales</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="sec" style="padding-top:10px;">
+    <div class="sec-lbl">Testimonials</div>
+    <div class="sec-title">Trusted by <span class="gt">real businesses</span></div>
+    <div class="testi-grid">
+      <div class="tc"><div style="margin-bottom:12px;font-size:13px;">⭐⭐⭐⭐⭐</div><div class="tc-text">"Autoniv handles 500+ patient reminder calls daily. No-show rate dropped 40% in month one. The Hindi voice quality is incredible."</div><div style="display:flex;align-items:center;gap:9px;"><div class="tc-av" style="background:rgba(30,142,240,.12);color:var(--blue);">Dr</div><div><div style="font-size:13px;font-weight:600;">Dr. Priya Sharma</div><div style="font-size:11px;color:var(--m1);">MedCare Clinic, Delhi</div></div></div></div>
+      <div class="tc"><div style="margin-bottom:12px;font-size:13px;">⭐⭐⭐⭐⭐</div><div class="tc-text">"3,000-contact loan recovery campaign ran in 2 hours. The AI handles objections better than our human agents honestly."</div><div style="display:flex;align-items:center;gap:9px;"><div class="tc-av" style="background:rgba(34,201,122,.1);color:var(--green);">RK</div><div><div style="font-size:13px;font-weight:600;">Rohit Kumar</div><div style="font-size:11px;color:var(--m1);">FinEdge NBFC, Mumbai</div></div></div></div>
+      <div class="tc"><div style="margin-bottom:12px;font-size:13px;">⭐⭐⭐⭐⭐</div><div class="tc-text">"Set up a delivery confirmation agent in 20 minutes. It calls customers, confirms slot, updates our system. Zero code needed."</div><div style="display:flex;align-items:center;gap:9px;"><div class="tc-av" style="background:rgba(15,207,176,.08);color:var(--teal);">AS</div><div><div style="font-size:13px;font-weight:600;">Amit Singh</div><div style="font-size:11px;color:var(--m1);">SwiftDeliver, Bangalore</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="sec" style="padding-top:0;" id="contact">
+    <div class="cta-box">
+      <h2 style="font-family:var(--fh);font-size:clamp(26px,4vw,50px);font-weight:900;letter-spacing:-1.5px;margin-bottom:14px;">Ready to <span class="gt">automate your calls?</span></h2>
+      <p style="font-size:15px;color:var(--m1);max-width:440px;margin:0 auto 28px;">Join 500+ businesses. No credit card required.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-p" style="padding:13px 26px;font-size:15px;" onclick="goPage('pg-dash')">Start Free — No Card</button>
+        <button class="btn btn-o" style="padding:13px 26px;font-size:15px;">Book a Demo</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-g">
+      <div>
+        <div class="logo-row" style="margin-bottom:12px;">
+          <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><defs><linearGradient id="lg1" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1e8ef0"/><stop offset="50%" stop-color="#0fcfb0"/><stop offset="100%" stop-color="#22c97a"/></linearGradient></defs><path d="M40 8L68 68H52L40 40L28 68H12Z" fill="url(#lg1)"/><path d="M24 52Q40 30 56 52" stroke="#0fcfb0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="52" cy="52" r="5" fill="#22c97a"/><circle cx="52" cy="52" r="2" fill="#fff"/></svg>
+          <span class="logo-name">AUTONIV</span>
+        </div>
+        <p style="font-size:13px;color:var(--m1);max-width:220px;line-height:1.7;">AI voice agents for Indian businesses. Call smarter, close faster.</p>
+      </div>
+      <div class="footer-col"><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Integrations</a><a href="#">API Docs</a></div>
+      <div class="footer-col"><h4>Industries</h4><a href="#">Healthcare</a><a href="#">Finance</a><a href="#">Logistics</a><a href="#">EdTech</a></div>
+      <div class="footer-col"><h4>Company</h4><a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Contact</a></div>
+    </div>
+    <div class="footer-bot"><span>© 2026 Autoniv. All rights reserved.</span><span>Privacy · Terms · Support</span></div>
+  </footer>
+</div>
+
+<!-- ═══ DASHBOARD ══════════════════════════════════ -->
+<div id="pg-dash" class="page">
+  <div class="db-wrap">
+    <!-- SIDEBAR -->
+    <aside class="db-side">
+      <div class="db-logo">
+        <svg width="28" height="28" viewBox="0 0 80 80" fill="none"><defs><linearGradient id="lg2" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1e8ef0"/><stop offset="50%" stop-color="#0fcfb0"/><stop offset="100%" stop-color="#22c97a"/></linearGradient></defs><path d="M40 8L68 68H52L40 40L28 68H12Z" fill="url(#lg2)"/><path d="M24 52Q40 30 56 52" stroke="#0fcfb0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="52" cy="52" r="5" fill="#22c97a"/><circle cx="52" cy="52" r="2" fill="#fff"/></svg>
+        <span class="logo-name" style="font-size:17px;">AUTONIV</span>
+      </div>
+      <nav class="db-nav">
+        <div class="db-sec-lbl">Main</div>
+        <div class="ni on" onclick="goSub('s-home',this)" id="ni-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
+        </div>
+        <div class="ni" onclick="goSub('s-agents',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>AI Assistants
+          <span class="ni-badge" id="badge-agents" style="background:var(--blue);color:#fff;">0</span>
+        </div>
+        <div class="ni" onclick="goSub('s-calls',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 11.5 19.79 19.79 0 0 1 1.62 2.91A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.42a16 16 0 0 0 6.29 6.29l1.67-1.67a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call History
+          <span class="ni-badge" id="badge-calls" style="background:var(--m3);color:var(--m1);">0</span>
+        </div>
+        <div class="ni" onclick="goSub('s-campaigns',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Campaigns
+        </div>
+        <div class="db-sec-lbl">Setup</div>
+        <div class="ni" onclick="goSub('s-create',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Create Assistant
+        </div>
+        <div class="ni" onclick="goSub('s-integrations',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Integrations
+        </div>
+        <div class="ni" onclick="goPage('pg-land')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Back to Website
+        </div>
+      </nav>
+      <div class="db-foot">
+        <div class="db-user">
+          <div class="db-av">R</div>
+          <div><div style="font-size:13px;font-weight:600;">Rahul Sharma</div><div style="font-size:11px;color:var(--green);">Growth Plan</div></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="db-main">
+      <div class="db-top">
+        <div><div class="db-title" id="db-pg-title">Dashboard</div><div class="db-bc">Autoniv · <span id="db-date"></span></div></div>
+        <div class="db-top-r">
+          <button class="btn btn-g btn-sm" onclick="loadLiveData()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5"/></svg>
+            Refresh
+          </button>
+          <button class="btn btn-p btn-sm" onclick="goSub('s-create',null)">+ New Assistant</button>
+        </div>
+      </div>
+      <div class="db-content">
+
+        <!-- ── HOME ── -->
+        <div id="s-home" class="sub on">
+          <div class="stats-row">
+            <div class="sc bl"><div class="sc-ico" style="background:rgba(30,142,240,.1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.68 11.5 19.79 19.79 0 0 1 1.62 2.91A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.42a16 16 0 0 0 6.29 6.29l1.67-1.67a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div class="sc-lbl">Total Calls</div><div class="sc-val" id="stat-calls">—</div><div class="sc-ch up" id="stat-calls-ch">Loading...</div></div>
+            <div class="sc gr"><div class="sc-ico" style="background:rgba(34,201,122,.1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div><div class="sc-lbl">AI Resolved</div><div class="sc-val" id="stat-resolved">—</div><div class="sc-ch up" id="stat-resolved-ch">Loading...</div></div>
+            <div class="sc tl"><div class="sc-ico" style="background:rgba(15,207,176,.1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sc-lbl">Avg Duration</div><div class="sc-val" id="stat-dur">—</div><div class="sc-ch" id="stat-dur-ch">Loading...</div></div>
+            <div class="sc am"><div class="sc-ico" style="background:rgba(251,191,36,.1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="sc-lbl">Assistants Live</div><div class="sc-val" id="stat-agents">—</div><div class="sc-ch up" id="stat-agents-ch">Loading...</div></div>
+          </div>
+          <div class="two-col">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div class="card"><div class="ch"><div class="ct">Call Volume — 7 Days</div><div style="display:flex;gap:10px;font-size:11px;color:var(--m1);"><span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:2px;background:var(--blue);display:inline-block;"></span>In</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:2px;background:var(--green);display:inline-block;"></span>Out</span></div></div><div class="cb"><div class="bars" id="bar-chart"></div></div></div>
+              <div class="card"><div class="ch"><div class="ct">Recent Calls</div><button class="btn btn-g btn-xs" onclick="goSub('s-calls',null)">View All</button></div><div class="cb" style="padding-top:6px;"><table class="tbl"><thead><tr><th>Caller</th><th>Assistant</th><th>Dur</th><th>Lang</th><th>Status</th><th>Action</th></tr></thead><tbody id="recent-calls"></tbody></table></div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div class="card"><div class="ch"><div class="ct">Assistants</div><button class="btn btn-p btn-xs" onclick="goSub('s-create',null)">+ New</button></div><div class="cb" id="home-agents"></div></div>
+              <div class="card"><div class="ch"><div class="ct">Languages</div></div><div class="cb" id="lang-list"></div></div>
+            </div>
+          </div>
+          <div class="card"><div class="ch"><div class="ct">Active Campaigns</div><button class="btn btn-p btn-xs" onclick="goSub('s-campaigns',null)">All Campaigns</button></div><div class="cb" id="home-camps"></div></div>
+        </div>
+
+        <!-- ── AGENTS ── -->
+        <div id="s-agents" class="sub">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <div><div style="font-family:var(--fh);font-size:22px;font-weight:800;">AI Assistants</div><div style="font-size:13px;color:var(--m1);margin-top:3px;">Manage and monitor your deployed voice agents</div></div>
+            <button class="btn btn-p" onclick="goSub('s-create',null)">+ Create New</button>
+          </div>
+          <div id="agents-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;"></div>
+          <div id="agents-empty" style="display:none;text-align:center;padding:60px 20px;color:var(--m1);">
+            <div style="font-size:36px;margin-bottom:12px;">🤖</div>
+            <div style="font-family:var(--fh);font-size:18px;font-weight:700;margin-bottom:8px;">No assistants yet</div>
+            <div style="font-size:13px;margin-bottom:20px;">Create your first AI voice agent to get started</div>
+            <button class="btn btn-p" onclick="goSub('s-create',null)">Create Your First Assistant</button>
+          </div>
+        </div>
+
+        <!-- ── CALLS ── -->
+        <div id="s-calls" class="sub">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <div style="font-family:var(--fh);font-size:22px;font-weight:800;">Call History</div>
+            <div style="display:flex;gap:9px;">
+              <select class="fi fsel" style="width:150px;" onchange="filterCalls(this.value)">
+                <option value="">All Status</option>
+                <option value="completed">Completed</option>
+                <option value="missed">Missed</option>
+                <option value="active">In Progress</option>
+              </select>
+              <button class="btn btn-g btn-sm" onclick="loadCalls()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5"/></svg>Refresh
+              </button>
+            </div>
+          </div>
+          <div class="card"><div class="cb" style="padding-top:6px;"><table class="tbl" style="width:100%;"><thead><tr><th>Caller</th><th>Assistant</th><th>Duration</th><th>Language</th><th>Time</th><th>Status</th><th>Transcript</th></tr></thead><tbody id="calls-table"></tbody></table></div></div>
+          <div id="calls-empty" style="display:none;text-align:center;padding:60px;color:var(--m1);">
+            <div style="font-size:32px;margin-bottom:10px;">📞</div>
+            <div style="font-family:var(--fh);font-size:16px;font-weight:700;">No calls yet</div>
+            <div style="font-size:13px;margin-top:6px;">Make your first call to see history here</div>
+          </div>
+        </div>
+
+        <!-- ── CAMPAIGNS ── -->
+        <div id="s-campaigns" class="sub">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <div style="font-family:var(--fh);font-size:22px;font-weight:800;">Campaigns</div>
+            <button class="btn btn-p" onclick="showCampaignLauncher()">+ Launch Campaign</button>
+          </div>
+          <div id="camp-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"></div>
+          <!-- Campaign Launcher -->
+          <div id="camp-launcher" style="display:none;margin-top:20px;">
+            <div class="card" style="padding:24px;">
+              <div style="font-family:var(--fh);font-size:16px;font-weight:700;margin-bottom:18px;">Launch New Campaign</div>
+              <div class="fr">
+                <div class="fg"><label class="fl">Campaign Name</label><input class="fi" id="cl-name" placeholder="e.g. Q1 Lead Qualification"/></div>
+                <div class="fg"><label class="fl">Select Assistant</label><select class="fi fsel" id="cl-assistant"><option value="">Choose assistant...</option></select></div>
+              </div>
+              <div class="fg" style="margin-bottom:12px;"><label class="fl">Contact Numbers (one per line, format: +91XXXXXXXXXX,Name)</label><textarea class="fi" id="cl-contacts" rows="5" placeholder="+919876543210,Priya Sharma&#10;+919876543211,Rahul Kumar&#10;+919876543212,Anjali Singh"></textarea></div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-p" onclick="launchCampaign()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Launch Now
+                </button>
+                <button class="btn btn-g" onclick="document.getElementById('camp-launcher').style.display='none'">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CREATE ASSISTANT ── -->
+        <div id="s-create" class="sub">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+            <div><div style="font-family:var(--fh);font-size:22px;font-weight:800;">Create AI Assistant</div><div style="font-size:13px;color:var(--m1);margin-top:3px;">Deploy a voice agent in minutes</div></div>
+            <button class="btn btn-g btn-sm" onclick="goSub('s-home',null)">← Dashboard</button>
+          </div>
+          <div class="ca-grid">
+            <div>
+              <div class="card" style="margin-bottom:16px;">
+                <div class="ca-sec">
+                  <div class="ca-st">Basic Information</div><div class="ca-ss">Name and configure your assistant</div>
+                  <div class="fr"><div class="fg"><label class="fl">Assistant Name</label><input class="fi" id="ca-name" placeholder="e.g. Healthcare Bot" oninput="updatePreviewName(this.value)"/></div><div class="fg"><label class="fl">Industry</label><select class="fi fsel" id="ca-industry"><option>Healthcare</option><option>Finance & Loans</option><option>Logistics</option><option>E-Commerce</option><option>HR & Recruitment</option><option>EdTech</option><option>Other</option></select></div></div>
+                  <div class="fr full"><div class="fg"><label class="fl">System Prompt — What should the AI do?</label><textarea class="fi" id="ca-prompt" rows="4" placeholder="You are a helpful AI assistant for [Company Name]. Your job is to:&#10;1. Greet callers warmly in Hindi or English&#10;2. Answer questions about our services&#10;3. Book appointments if needed&#10;Always be polite and professional."></textarea></div></div>
+                  <div class="fr"><div class="fg"><label class="fl">Language</label><select class="fi fsel" id="ca-lang"><option value="multi">Hindi + English (Auto-detect)</option><option value="en-IN">English (India)</option><option value="hi">Hindi</option><option value="ta">Tamil</option><option value="mr">Marathi</option><option value="te">Telugu</option></select></div><div class="fg"><label class="fl">Call Type</label><select class="fi fsel" id="ca-calltype"><option value="outbound">Outbound (AI calls customers)</option><option value="inbound">Inbound (Customers call AI)</option><option value="both">Both</option></select></div></div>
+                  <div class="fr"><div class="fg"><label class="fl">Max Call Duration (mins)</label><input class="fi" id="ca-maxdur" type="number" value="5" min="1" max="30"/></div><div class="fg"><label class="fl">Fallback Action</label><select class="fi fsel" id="ca-fallback"><option>Transfer to human agent</option><option>Leave voicemail</option><option>Schedule callback</option><option>End call politely</option></select></div></div>
+                </div>
+                <div class="ca-sec">
+                  <div class="ca-st">Personality</div><div class="ca-ss">Choose how your AI behaves</div>
+                  <div class="pers-g" id="pers-picker"></div>
+                </div>
+                <div class="ca-sec">
+                  <div class="ca-st">Voice</div><div class="ca-ss">Pick the voice your customers hear</div>
+                  <div class="vc-g" id="voice-picker"></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="ca-sec">
+                  <div class="ca-st">Knowledge Base</div><div class="ca-ss">Upload files so AI answers from your data</div>
+                  <div class="kb-drop" onclick="toast('File upload connects to Supabase Storage in production!','info')">
+                    <div style="font-size:26px;margin-bottom:8px;">📄</div>
+                    <div style="font-size:14px;font-weight:600;margin-bottom:4px;">Drop files or click to upload</div>
+                    <div style="font-size:12px;color:var(--m1);">PDF, DOCX, TXT up to 25MB</div>
+                  </div>
+                  <div class="kb-file"><span style="font-size:15px;">📋</span><span style="font-weight:500;flex:1;">example-faqs.pdf</span><span style="font-size:11px;color:var(--m1);">240 KB</span><span style="font-size:11px;color:var(--green);">✓ Ready</span></div>
+                </div>
+              </div>
+            </div>
+            <!-- PHONE PREVIEW + DEPLOY -->
+            <div>
+              <div class="phone-prev">
+                <div style="font-family:var(--fh);font-size:14px;font-weight:700;margin-bottom:3px;">Live Preview</div>
+                <div style="font-size:12px;color:var(--m1);">Sample conversation</div>
+                <div class="ph-frame">
+                  <div class="ph-notch"></div>
+                  <div class="cb2 ai"><div class="cb2-name" id="prev-name">Your Assistant</div>नमस्ते! मैं आपकी कैसे मदद कर सकता हूँ? / Hello! How can I help you today?</div>
+                  <div class="cb2 user">Haan, mujhe appointment chahiye.</div>
+                  <div class="cb2 ai"><div class="cb2-name" id="prev-name2">Your Assistant</div>ज़रूर! आप किस दिन और समय पर आना चाहते हैं? / Sure! What day and time works for you?</div>
+                  <div class="cb2 user">Tomorrow at 3pm please.</div>
+                  <div class="cb2 ai"><div class="cb2-name" id="prev-name3">Your Assistant</div>Perfect! Your appointment is confirmed for tomorrow at 3 PM. Is there anything else?</div>
+                </div>
+                <div class="prev-status"><div class="prev-dot"></div>AI Agent Ready</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0;">
+                  <div style="background:var(--bg2);border:1px solid var(--b1);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--fh);font-size:18px;font-weight:800;color:var(--blue);">&lt;330ms</div><div style="font-size:10.5px;color:var(--m1);margin-top:2px;">Latency</div></div>
+                  <div style="background:var(--bg2);border:1px solid var(--b1);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--fh);font-size:18px;font-weight:800;color:var(--green);">99.9%</div><div style="font-size:10.5px;color:var(--m1);margin-top:2px;">Uptime</div></div>
+                </div>
+                <button class="btn btn-p" style="width:100%;justify-content:center;font-size:14px;padding:12px;" onclick="deployAssistant()" id="deploy-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  Deploy Assistant
+                </button>
+                <button class="btn btn-g" style="width:100%;justify-content:center;margin-top:8px;font-size:12.5px;" onclick="testCall()">📞 Make Test Call</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── INTEGRATIONS ── -->
+        <div id="s-integrations" class="sub">
+          <div style="font-family:var(--fh);font-size:22px;font-weight:800;margin-bottom:6px;">Integrations</div>
+          <div style="font-size:13px;color:var(--m1);margin-bottom:22px;">Connect Autoniv to your existing tools</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="card" style="padding:0;">
+              <div class="ch"><div class="ct">Voice & Telephony</div></div>
+              <div class="cb">
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🎙️</div><div><div class="int-name">Vapi.ai</div><div class="int-desc">Voice AI engine · STT + LLM + TTS</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="conn-dot" id="int-vapi-dot" style="background:var(--m3);"></div><span id="int-vapi-status" style="font-size:11px;color:var(--m1);">Not configured</span></div></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">📞</div><div><div class="int-name">Twilio</div><div class="int-desc">Phone numbers · Managed by Vapi</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="conn-dot" id="int-twilio-dot" style="background:var(--m3);"></div><span style="font-size:11px;color:var(--m1);">Via Vapi</span></div></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🤖</div><div><div class="int-name">Claude AI</div><div class="int-desc">Anthropic · Conversation brain</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="conn-dot on"></div><span style="font-size:11px;color:var(--green);">Connected via Vapi</span></div></div>
+              </div>
+            </div>
+            <div class="card" style="padding:0;">
+              <div class="ch"><div class="ct">Database & Storage</div></div>
+              <div class="cb">
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🗄️</div><div><div class="int-name">Supabase</div><div class="int-desc">Calls, logs, assistants · Free tier</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="conn-dot" id="int-supa-dot" style="background:var(--m3);"></div><span id="int-supa-status" style="font-size:11px;color:var(--m1);">Not configured</span></div></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">☁️</div><div><div class="int-name">Storage</div><div class="int-desc">Audio recordings · Via Supabase</div></div></div><div style="display:flex;align-items:center;gap:8px;"><div class="conn-dot" id="int-storage-dot" style="background:var(--m3);"></div><span style="font-size:11px;color:var(--m1);">Needs Supabase</span></div></div>
+              </div>
+            </div>
+            <div class="card" style="padding:0;">
+              <div class="ch"><div class="ct">CRM</div></div>
+              <div class="cb">
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🟠</div><div><div class="int-name">HubSpot</div><div class="int-desc">Auto-create leads from calls</div></div></div><button class="btn btn-o btn-xs">Connect</button></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">☁️</div><div><div class="int-name">Salesforce</div><div class="int-desc">Sync contacts & opportunities</div></div></div><button class="btn btn-o btn-xs">Connect</button></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🟢</div><div><div class="int-name">Zoho CRM</div><div class="int-desc">Indian-friendly CRM integration</div></div></div><button class="btn btn-o btn-xs">Connect</button></div>
+              </div>
+            </div>
+            <div class="card" style="padding:0;">
+              <div class="ch"><div class="ct">Communication</div></div>
+              <div class="cb">
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">💬</div><div><div class="int-name">WhatsApp</div><div class="int-desc">Post-call WhatsApp follow-up</div></div></div><button class="btn btn-o btn-xs">Connect</button></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">📧</div><div><div class="int-name">Email (SMTP)</div><div class="int-desc">Call summary emails</div></div></div><button class="btn btn-o btn-xs">Connect</button></div>
+                <div class="int-row"><div style="display:flex;align-items:center;gap:11px;"><div class="int-logo">🔗</div><div><div class="int-name">Webhook</div><div class="int-desc">Custom webhook for any tool</div></div></div><button class="btn btn-o btn-xs">Configure</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end db-content -->
+    </div><!-- end db-main -->
+  </div><!-- end db-wrap -->
+</div><!-- end pg-dash -->
+
+<script>
+// ════════════════════════════════════════════════════
+// CONFIG — keys are stored in memory (sessionStorage)
+// ════════════════════════════════════════════════════
+const CFG = {
+  get vapiKey()     { return sessionStorage.getItem('vapi_key')      || ''; },
+  get vapiPhone()   { return sessionStorage.getItem('vapi_phone')    || ''; },
+  get supaUrl()     { return sessionStorage.getItem('supa_url')      || ''; },
+  get supaKey()     { return sessionStorage.getItem('supa_key')      || ''; },
+  get hasVapi()     { return !!this.vapiKey; },
+  get hasSupa()     { return !!(this.supaUrl && this.supaKey); },
+};
+
+function saveConfig() {
+  const v  = document.getElementById('inp-vapi').value.trim();
+  const vp = document.getElementById('inp-vapiphone').value.trim();
+  const su = document.getElementById('inp-supa-url').value.trim();
+  const sk = document.getElementById('inp-supa-key').value.trim();
+  if (v)  sessionStorage.setItem('vapi_key',   v);
+  if (vp) sessionStorage.setItem('vapi_phone', vp);
+  if (su) sessionStorage.setItem('supa_url',   su);
+  if (sk) sessionStorage.setItem('supa_key',   sk);
+  updateIntegrationStatus();
+  toast('API keys saved! Loading live data...', 'ok');
+  document.getElementById('cfg-banner').style.display = 'none';
+  setTimeout(loadLiveData, 800);
+}
+
+function updateIntegrationStatus() {
+  const vapiDot = document.getElementById('int-vapi-dot');
+  const vapiSt  = document.getElementById('int-vapi-status');
+  const supaDot = document.getElementById('int-supa-dot');
+  const supaSt  = document.getElementById('int-supa-status');
+  if (CFG.hasVapi && vapiDot) {
+    vapiDot.style.background = 'var(--green)';
+    if (vapiSt) vapiSt.textContent = 'Connected';
+    if (vapiSt) vapiSt.style.color = 'var(--green)';
+    const td = document.getElementById('int-twilio-dot');
+    if (td) td.style.background = 'var(--green)';
+  }
+  if (CFG.hasSupa && supaDot) {
+    supaDot.style.background = 'var(--green)';
+    if (supaSt) supaSt.textContent = 'Connected';
+    if (supaSt) supaSt.style.color = 'var(--green)';
+    const sd = document.getElementById('int-storage-dot');
+    if (sd) sd.style.background = 'var(--green)';
+  }
+}
+
+// ════════════════════════════════════════════════════
+// PAGE / TAB NAVIGATION
+// ════════════════════════════════════════════════════
+const pageTitles = {
+  's-home':'Dashboard','s-agents':'AI Assistants','s-calls':'Call History',
+  's-campaigns':'Campaigns','s-create':'Create Assistant','s-integrations':'Integrations'
+};
+
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0, 0);
+  if (id === 'pg-dash') { setDate(); updateIntegrationStatus(); loadLiveData(); }
+}
+
+function goSub(id, el) {
+  document.querySelectorAll('.sub').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if (el) {
+    document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+    el.classList.add('on');
+  }
+  const t = document.getElementById('db-pg-title');
+  if (t && pageTitles[id]) t.textContent = pageTitles[id];
+  // Load data for that page
+  if (id === 's-calls')     loadCalls();
+  if (id === 's-agents')    renderAgentsPage();
+  if (id === 's-campaigns') renderCampaigns();
+}
+
+function setDate() {
+  const el = document.getElementById('db-date');
+  if (el) el.textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+// ════════════════════════════════════════════════════
+// TOAST NOTIFICATIONS
+// ════════════════════════════════════════════════════
+function toast(msg, type='info', dur=3500) {
+  const c = document.getElementById('toast');
+  const d = document.createElement('div');
+  d.className = `toast-item ${type}`;
+  const icons = { ok:'✅', err:'❌', info:'ℹ️' };
+  d.innerHTML = `<span>${icons[type]||'ℹ️'}</span><span style="flex:1;">${msg}</span>`;
+  c.appendChild(d);
+  setTimeout(() => { d.style.opacity='0'; d.style.transform='translateY(10px)'; d.style.transition='all .3s'; setTimeout(()=>d.remove(), 300); }, dur);
+}
+
+// ════════════════════════════════════════════════════
+// VAPI API CALLS
+// ════════════════════════════════════════════════════
+const VAPI = 'https://api.vapi.ai';
+
+async function vapiRequest(method, path, body=null) {
+  if (!CFG.hasVapi) throw new Error('Vapi API key not configured. Please add it in the banner above.');
+  const opts = {
+    method,
+    headers: { 'Authorization': `Bearer ${CFG.vapiKey}`, 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${VAPI}${path}`, opts);
+  const text = await res.text();
+  if (!res.ok) {
+    // Try to extract human-readable message from Vapi's JSON error
+    let detail = text;
+    try {
+      const json = JSON.parse(text);
+      detail = json.message || json.error || text;
+    } catch(_) {}
+    throw new Error(`Vapi ${res.status}: ${detail}`);
+  }
+  try { return JSON.parse(text); } catch(_) { return {}; }
+}
+
+// ════════════════════════════════════════════════════
+// SUPABASE API CALLS
+// ════════════════════════════════════════════════════
+async function supaRequest(method, table, body=null, query='') {
+  if (!CFG.hasSupa) return null;
+  const opts = {
+    method,
+    headers: {
+      'apikey': CFG.supaKey,
+      'Authorization': `Bearer ${CFG.supaKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'return=representation' : ''
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(`${CFG.supaUrl}/rest/v1/${table}${query}`, opts);
+  if (!res.ok && res.status !== 204) return null;
+  if (res.status === 204) return { data: [] };
+  return res.json();
+}
+
+async function supaGet(table, query='') {
+  return supaRequest('GET', table, null, query);
+}
+
+async function supaInsert(table, data) {
+  return supaRequest('POST', table, data);
+}
+
+async function supaUpdate(table, data, query) {
+  return supaRequest('PATCH', table, data, query);
+}
+
+// ════════════════════════════════════════════════════
+// LOCAL STATE (fallback when no keys)
+// ════════════════════════════════════════════════════
+let STATE = {
+  assistants: [],
+  calls: [],
+  campaigns: [
+    { id:1, name:'Q1 Lead Qualification', meta:'Banking · 5,200 contacts', pct:68, color:'var(--blue)',  status:'Running', emoji:'🎯' },
+    { id:2, name:'Delivery Confirmation',  meta:'Logistics · 1,800 contacts', pct:34, color:'var(--green)', status:'Running', emoji:'🚚' },
+    { id:3, name:'Appointment Reminders',  meta:'Healthcare · 920 contacts', pct:8,  color:'var(--teal)', status:'Scheduled', emoji:'🏥' },
+  ],
+  analytics: { total:0, completed:0, rate:0, avgDur:'0:00' }
+};
+
+// ════════════════════════════════════════════════════
+// LOAD LIVE DATA (assistants + calls + analytics)
+// ════════════════════════════════════════════════════
+async function loadLiveData() {
+  await Promise.all([ loadAssistants(), loadCalls(), loadAnalytics() ]);
+  renderHome();
+}
+
+async function loadAssistants() {
+  if (!CFG.hasVapi) return;
+  try {
+    const data = await vapiRequest('GET', '/assistant');
+    // Vapi returns array directly
+    STATE.assistants = Array.isArray(data) ? data : [];
+    document.getElementById('badge-agents').textContent = STATE.assistants.length;
+    renderAgentsPage();
+  } catch(e) {
+    console.warn('Could not load assistants:', e.message);
+    toast('Could not load assistants: ' + e.message.slice(0,80), 'err', 5000);
+  }
+}
+
+async function loadCalls() {
+  if (!CFG.hasVapi) { renderCallsTable([]); return; }
+  try {
+    // Vapi returns array directly; correct sort param is 'createdAtDesc'
+    const data = await vapiRequest('GET', '/call?limit=50&sortOrder=createdAtDesc');
+    STATE.calls = Array.isArray(data) ? data : [];
+    document.getElementById('badge-calls').textContent = STATE.calls.length;
+    renderCallsTable(STATE.calls);
+  } catch(e) {
+    console.warn('Could not load calls:', e.message);
+    renderCallsTable([]);
+  }
+}
+
+async function loadAnalytics() {
+  const calls = STATE.calls;
+  const total = calls.length;
+  const completed = calls.filter(c => c.status === 'ended' || c.status === 'completed').length;
+  const rate = total ? Math.round(completed / total * 100) : 0;
+  const durations = calls.map(c => c.duration || c.durationSeconds || 0).filter(Boolean);
+  const avgSec = durations.length ? Math.round(durations.reduce((a,b)=>a+b,0)/durations.length) : 0;
+  STATE.analytics = { total, completed, rate, avgDur: `${Math.floor(avgSec/60)}:${(avgSec%60).toString().padStart(2,'0')}` };
+}
+
+// ════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ════════════════════════════════════════════════════
+function renderHome() {
+  const a = STATE.analytics;
+  // Stats
+  safeSet('stat-calls', STATE.calls.length || '—');
+  safeSet('stat-calls-ch', CFG.hasVapi ? `${STATE.calls.length} total calls` : 'Add Vapi key to see live data');
+  safeSet('stat-resolved', a.rate ? a.rate+'%' : '—');
+  safeSet('stat-resolved-ch', CFG.hasVapi ? `${a.completed} calls resolved by AI` : 'Add keys above');
+  safeSet('stat-dur', a.avgDur !== '0:00' ? a.avgDur : '—');
+  safeSet('stat-dur-ch', 'Average call duration');
+  safeSet('stat-agents', STATE.assistants.length || '—');
+  safeSet('stat-agents-ch', `${STATE.assistants.length} deployed`);
+
+  // Bar chart
+  renderBarChart();
+  // Recent calls
+  renderRecentCalls();
+  // Home agents
+  renderHomeAgents();
+  // Languages
+  renderLangs();
+  // Campaigns
+  renderHomeCampaigns();
+}
+
+function safeSet(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+function renderBarChart() {
+  const el = document.getElementById('bar-chart');
+  if (!el) return;
+  el.innerHTML = '';
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const inb  = [320,480,390,610,520,280,410];
+  const out  = [210,350,280,490,380,190,320];
+  const maxV = Math.max(...inb,...out);
+  days.forEach((d,i) => {
+    const w = document.createElement('div'); w.className='bw';
+    const bd = document.createElement('div'); bd.style.cssText='display:flex;gap:2px;align-items:flex-end;flex:1;width:100%;';
+    const b1 = document.createElement('div'); b1.className='bar'; b1.style.cssText=`height:${Math.round(inb[i]/maxV*68)}px;background:var(--blue);opacity:${i===3?1:.45};flex:1;`;
+    const b2 = document.createElement('div'); b2.className='bar'; b2.style.cssText=`height:${Math.round(out[i]/maxV*68)}px;background:var(--green);opacity:${i===3?1:.38};flex:1;`;
+    const lbl= document.createElement('div'); lbl.className='bl2'; lbl.textContent=d;
+    bd.append(b1,b2); w.append(bd,lbl); el.appendChild(w);
+  });
+}
+
+function renderRecentCalls() {
+  const el = document.getElementById('recent-calls');
+  if (!el) return;
+  el.innerHTML = '';
+  const calls = STATE.calls.slice(0,6);
+  if (!calls.length) {
+    el.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--m1);padding:24px;font-size:13px;">${CFG.hasVapi ? 'No calls yet — make your first call!' : 'Add Vapi key above to see real calls'}</td></tr>`;
+    return;
+  }
+  calls.forEach(c => {
+    // Vapi statuses: queued, ringing, in-progress, forwarding, ended
+    const isEnded = c.status === 'ended' || c.status === 'completed';
+    const isActive = c.status === 'in-progress' || c.status === 'ringing' || c.status === 'queued';
+    const pillClass = isEnded ? 'ok' : isActive ? 'ip' : 'no';
+    const statusLabel = isEnded ? 'Completed' : isActive ? 'In Progress' : c.status || 'Missed';
+    // Duration: Vapi uses 'duration' in seconds
+    const durSecs = c.duration || c.durationSeconds || 0;
+    const dur = durSecs ? `${Math.floor(durSecs/60)}:${(durSecs%60).toString().padStart(2,'0')}` : '—';
+    const phone  = c.customer?.number || c.phoneNumber || '—';
+    const name   = c.customer?.name || phone;
+    const agName = c.assistant?.name || (c.assistantId ? '···'+c.assistantId.slice(-6) : '—');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="font-weight:600;">${name}</div><div style="font-size:11px;color:var(--m1);">${phone}</div></td>
+      <td style="font-size:12px;color:var(--m1);">${agName}</td>
+      <td style="font-family:var(--fh);">${dur}</td>
+      <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:var(--s2);color:var(--m1);">Auto</span></td>
+      <td><span class="pill ${pillClass}"><span class="pill-dot"></span>${statusLabel}</span></td>
+      <td><button class="btn btn-g" style="padding:3px 9px;font-size:11px;" onclick="viewTranscript('${c.id||''}')">Transcript</button></td>`;
+    el.appendChild(tr);
+  });
+}
+
+function renderHomeAgents() {
+  const el = document.getElementById('home-agents');
+  if (!el) return;
+  el.innerHTML = '';
+  if (!STATE.assistants.length) {
+    el.innerHTML = `<div style="text-align:center;padding:24px;color:var(--m1);font-size:13px;">No assistants yet.<br/><button class="btn btn-p btn-sm" style="margin-top:10px;" onclick="goSub('s-create',null)">Create One</button></div>`;
+    return;
+  }
+  STATE.assistants.slice(0,4).forEach(a => {
+    const d = document.createElement('div');
+    d.className = 'ag live';
+    d.innerHTML = `<div class="ag-ico">🤖</div><div style="flex:1;min-width:0;"><div class="ag-n">${a.name}</div><div class="ag-t">${a.model?.model || 'Claude'} · ${a.voice?.voiceId || 'Default'}</div></div><div class="ag-r"><div class="live-p"><div class="live-d"></div>LIVE</div><div style="font-size:10px;color:var(--m1);margin-top:2px;">Active</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderAgentsPage() {
+  const grid  = document.getElementById('agents-grid');
+  const empty = document.getElementById('agents-empty');
+  if (!grid || !empty) return;
+  grid.innerHTML = '';
+  if (!STATE.assistants.length) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  grid.style.display = 'grid';
+  empty.style.display = 'none';
+  STATE.assistants.forEach(a => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.style.padding = '20px';
+    d.innerHTML = `
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:14px;">
+        <div class="ag-ico" style="width:42px;height:42px;font-size:18px;">🤖</div>
+        <div style="flex:1;min-width:0;"><div style="font-family:var(--fh);font-size:14px;font-weight:700;">${a.name}</div><div style="font-size:11px;color:var(--m1);margin-top:2px;">${a.model?.model || 'Claude'}</div></div>
+        <span class="sbadge live">● LIVE</span>
+      </div>
+      <div style="font-size:12px;color:var(--m1);margin-bottom:6px;">ID: <code style="font-size:11px;background:var(--s2);padding:2px 6px;border-radius:4px;">${a.id?.slice(-8)||'—'}</code></div>
+      <div style="font-size:12px;color:var(--m1);margin-bottom:14px;">Voice: ${a.voice?.voiceId || 'Default'}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-g btn-xs" style="flex:1;justify-content:center;" onclick="makeTestCall('${a.id}','${a.name}')">📞 Test Call</button>
+        <button class="btn btn-o btn-xs" style="flex:1;justify-content:center;" onclick="deleteAssistant('${a.id}','${a.name}')">Delete</button>
+      </div>`;
+    grid.appendChild(d);
+  });
+}
+
+function renderCallsTable(calls) {
+  const el    = document.getElementById('calls-table');
+  const empty = document.getElementById('calls-empty');
+  if (!el) return;
+  el.innerHTML = '';
+  if (!calls.length) {
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  calls.forEach(c => {
+    const isEnded  = c.status === 'ended' || c.status === 'completed';
+    const isActive = c.status === 'in-progress' || c.status === 'ringing' || c.status === 'queued';
+    const pillClass = isEnded ? 'ok' : isActive ? 'ip' : 'no';
+    const label     = isEnded ? 'Completed' : isActive ? 'In Progress' : c.status || 'Missed';
+    const durSecs   = c.duration || c.durationSeconds || 0;
+    const dur       = durSecs ? `${Math.floor(durSecs/60)}:${(durSecs%60).toString().padStart(2,'0')}` : '—';
+    const phone     = (c.customer && c.customer.number) || c.phoneNumber || '—';
+    const custName  = (c.customer && c.customer.name) || phone;
+    const agName    = (c.assistant && c.assistant.name) || (c.assistantId ? '···'+c.assistantId.slice(-6) : '—');
+    const started   = c.startedAt || c.createdAt
+                    ? new Date(c.startedAt||c.createdAt).toLocaleString('en-IN', {dateStyle:'short',timeStyle:'short'})
+                    : '—';
+    const callId    = c.id || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><div style="font-weight:600;">${custName}</div><div style="font-size:11px;color:var(--m1);">${phone}</div></td>
+      <td style="font-size:12px;color:var(--m1);">${agName}</td>
+      <td style="font-family:var(--fh);">${dur}</td>
+      <td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:var(--s2);color:var(--m1);">Auto</span></td>
+      <td style="font-size:12px;color:var(--m1);">${started}</td>
+      <td><span class="pill ${pillClass}"><span class="pill-dot"></span>${label}</span></td>
+      <td><button class="btn btn-g" style="padding:3px 9px;font-size:11px;" onclick="viewTranscript('${callId}')">View</button></td>`;
+    el.appendChild(tr);
+  });
+}
+
+function filterCalls(status) {
+  const filtered = status ? STATE.calls.filter(c => {
+    if (status === 'completed') return c.status === 'ended' || c.status === 'completed';
+    if (status === 'active')    return c.status === 'in-progress' || c.status === 'ringing' || c.status === 'queued';
+    if (status === 'missed')    return c.status !== 'ended' && c.status !== 'in-progress' && c.status !== 'ringing' && c.status !== 'queued';
+    return c.status === status;
+  }) : STATE.calls;
+  renderCallsTable(filtered);
+}
+
+function renderLangs() {
+  const el = document.getElementById('lang-list');
+  if (!el) return;
+  el.innerHTML = '';
+  [
+    {name:'Hindi',    code:'हिन्दी',  on:true},
+    {name:'English',  code:'EN-IN',   on:true},
+    {name:'Tamil',    code:'தமிழ்',  on:false},
+    {name:'Marathi',  code:'मराठी', on:false},
+    {name:'Telugu',   code:'తెలుగు', on:false},
+  ].forEach(l => {
+    const d = document.createElement('div'); d.className='lr';
+    d.innerHTML=`<div><div style="font-size:13px;font-weight:500;">${l.name}</div><div style="font-size:11px;color:var(--m1);">${l.code}</div></div><div class="tog ${l.on?'on':''}" onclick="this.classList.toggle('on')"><div class="tog-t"></div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderHomeCampaigns() {
+  const el = document.getElementById('home-camps');
+  if (!el) return;
+  el.innerHTML = '';
+  STATE.campaigns.slice(0,3).forEach(c => {
+    const d = document.createElement('div'); d.className='cr';
+    d.innerHTML=`<div class="ci">${c.emoji}</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--m1);margin-top:1px;">${c.meta}</div></div><div style="width:140px;display:flex;align-items:center;gap:8px;"><div class="pb"><div class="pf" style="width:${c.pct}%;background:${c.color};"></div></div><div style="font-size:12px;font-weight:700;color:${c.color};min-width:30px;text-align:right;">${c.pct}%</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderCampaigns() {
+  const el = document.getElementById('camp-grid');
+  if (!el) return;
+  el.innerHTML = '';
+  STATE.campaigns.forEach(c => {
+    const d = document.createElement('div'); d.className='card'; d.style.padding='20px';
+    const sc = c.status==='Running'?'live':c.status==='Scheduled'?'draft':'pause';
+    d.innerHTML=`<div style="display:flex;align-items:center;gap:11px;margin-bottom:12px;"><div class="ci" style="width:40px;height:40px;font-size:18px;">${c.emoji}</div><div style="flex:1;"><div style="font-family:var(--fh);font-size:14px;font-weight:700;">${c.name}</div><div style="font-size:11.5px;color:var(--m1);margin-top:2px;">${c.meta}</div></div><span class="sbadge ${sc}">${c.status}</span></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--m1);margin-bottom:6px;"><span>Progress</span><span style="color:${c.color};font-weight:700;">${c.pct}%</span></div><div class="pb" style="height:6px;margin-bottom:14px;"><div class="pf" style="width:${c.pct}%;background:${c.color};"></div></div><div style="display:flex;gap:8px;"><button class="btn btn-g btn-xs" style="flex:1;justify-content:center;">Analytics</button><button class="btn btn-o btn-xs" style="flex:1;justify-content:center;">Edit</button></div>`;
+    el.appendChild(d);
+  });
+  // Populate assistant selector in launcher
+  const sel = document.getElementById('cl-assistant');
+  if (sel) {
+    sel.innerHTML = '<option value="">Choose assistant...</option>';
+    STATE.assistants.forEach(a => {
+      const o = document.createElement('option');
+      o.value = a.id; o.textContent = a.name;
+      sel.appendChild(o);
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════
+// DEPLOY ASSISTANT (calls Vapi API)
+// ════════════════════════════════════════════════════
+async function deployAssistant() {
+  const name    = document.getElementById('ca-name').value.trim();
+  const prompt  = document.getElementById('ca-prompt').value.trim();
+  const lang    = document.getElementById('ca-lang').value;
+  const maxDur  = parseInt(document.getElementById('ca-maxdur').value) || 5;
+  const selVoice = document.querySelector('.vc.sel');
+  const voiceId  = selVoice?.dataset.voice || 'Priya';
+
+  if (!name) { toast('Please enter an assistant name', 'err'); return; }
+  if (!prompt) { toast('Please enter a system prompt', 'err'); return; }
+  if (!CFG.hasVapi) {
+    toast('No Vapi API key! Add it in the banner above.', 'err');
+    document.getElementById('cfg-banner').style.display = 'flex';
+    return;
+  }
+
+  const btn = document.getElementById('deploy-btn');
+  btn.innerHTML = '<div class="spin"></div> Deploying...';
+  btn.disabled = true;
+
+  // Deepgram nova-2 valid language codes
+  // "multi" = multilingual (Hindi+English auto-detect)
+  const langToDeepgram = {
+    'multi':  'multi',   // auto-detect Hindi + English
+    'en-IN':  'en-IN',   // valid in nova-2
+    'hi':     'hi',      // valid in nova-2
+    'ta':     'ta',      // valid in nova-2
+    'mr':     'mr',      // valid in nova-2
+    'te':     'te',      // valid in nova-2
+  };
+  const deepgramLang = langToDeepgram[lang] || 'en-IN';
+
+  // Vapi-supported voice providers with working voice IDs
+  const voiceMap = {
+    'Priya': { provider:'playht',   voiceId:'s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json' },
+    'Arjun': { provider:'playht',   voiceId:'s3://voice-cloning-zero-shot/a93f7dd2-ebd2-4a19-8d78-0e67dd0e7e18/male-cs/manifest.json' },
+    'Aria':  { provider:'openai',   voiceId:'nova' },
+    'James': { provider:'openai',   voiceId:'onyx' },
+  };
+  // Simplest safe fallback: always use openai voices to avoid provider issues
+  const safeVoiceMap = {
+    'Priya': { provider:'openai', voiceId:'nova'  },
+    'Arjun': { provider:'openai', voiceId:'echo'  },
+    'Aria':  { provider:'openai', voiceId:'nova'  },
+    'James': { provider:'openai', voiceId:'onyx'  },
+  };
+  const voice = safeVoiceMap[voiceId] || safeVoiceMap['Aria'];
+
+  // First message: use English only to avoid transcription issues on greeting
+  const firstMsg = `Hello! I'm ${name}. How can I help you today?`;
+
+  try {
+    const payload = {
+      name,
+      model: {
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5-20251001',
+        messages: [{ role:'system', content: prompt }],
+        temperature: 0.7,
+        maxTokens: 300,
+      },
+      voice: { provider: voice.provider, voiceId: voice.voiceId },
+      transcriber: {
+        provider: 'deepgram',
+        model: 'nova-2',
+        language: deepgramLang,
+      },
+      firstMessage: firstMsg,
+      endCallMessage: 'Thank you! Have a great day. Goodbye!',
+      endCallPhrases: ['goodbye','bye','thanks bye','thank you bye'],
+      silenceTimeoutSeconds: 10,
+      maxDurationSeconds: maxDur * 60,
+      recordingEnabled: true,
+    };
+
+    const data = await vapiRequest('POST', '/assistant', payload);
+
+    // Save to Supabase if configured
+    if (CFG.hasSupa) {
+      await supaInsert('assistants', {
+        vapi_id: data.id, name, language: lang,
+        voice: voiceId, status:'active',
+        created_at: new Date().toISOString()
+      });
+    }
+
+    STATE.assistants.push(data);
+    document.getElementById('badge-agents').textContent = STATE.assistants.length;
+    toast(`✅ "${name}" deployed successfully! ID: ${data.id.slice(-8)}`, 'ok', 5000);
+    renderHome();
+
+  } catch(e) {
+    console.error('Deploy error full:', e);
+    // Show readable error — strip JSON for toast, log full for debug
+    let errMsg = e.message || 'Unknown error';
+    try {
+      const parsed = JSON.parse(errMsg.substring(errMsg.indexOf('{')));
+      errMsg = parsed.message || errMsg;
+    } catch(_) {}
+    toast(`Deploy failed: ${errMsg.slice(0, 120)}`, 'err', 8000);
+  } finally {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Deploy Assistant';
+    btn.disabled = false;
+  }
+}
+
+// ════════════════════════════════════════════════════
+// MAKE OUTBOUND CALL
+// ════════════════════════════════════════════════════
+async function makeOutboundCall(assistantId, phoneNumber, customerName='Customer') {
+  if (!CFG.hasVapi)   { toast('Add Vapi key first — click the banner above', 'err'); return; }
+  if (!CFG.vapiPhone) { toast('Add Vapi Phone Number ID in the banner above', 'err');
+    document.getElementById('cfg-banner').style.display = 'flex'; return; }
+  if (!phoneNumber)   { toast('Enter a phone number', 'err'); return; }
+
+  // Ensure E.164 format
+  let phone = phoneNumber.trim().replace(/\s/g, '');
+  if (!phone.startsWith('+')) phone = '+91' + phone;
+
+  toast(`📞 Dialling ${phone}...`, 'info');
+  try {
+    const data = await vapiRequest('POST', '/call/phone', {
+      assistantId,
+      phoneNumberId: CFG.vapiPhone,
+      customer: { number: phone, name: customerName },
+    });
+
+    if (CFG.hasSupa) {
+      await supaInsert('calls', {
+        vapi_call_id: data.id, assistant_id: assistantId,
+        phone, customer_name: customerName,
+        status: 'initiated', direction: 'outbound',
+        started_at: new Date().toISOString()
+      });
+    }
+
+    toast(`✅ Call started! ID: ${(data.id||'').slice(-8)}`, 'ok', 5000);
+    setTimeout(loadCalls, 4000);
+    return data;
+  } catch(e) {
+    let msg = e.message || 'Unknown error';
+    try { const j=JSON.parse(msg.substring(msg.indexOf('{'))); msg=j.message||msg; } catch(_){}
+    toast(`Call failed: ${msg.slice(0,100)}`, 'err', 6000);
+  }
+}
+
+function testCall() {
+  const phone = prompt('Enter phone number to test (e.g. +919876543210):');
+  if (!phone) return;
+  if (!STATE.assistants.length) {
+    toast('Deploy an assistant first!', 'err');
+    return;
+  }
+  makeOutboundCall(STATE.assistants[0].id, phone, 'Test User');
+}
+
+function makeTestCall(assistantId, name) {
+  const phone = prompt(`Test call for "${name}"\nEnter phone number (+91XXXXXXXXXX):`);
+  if (phone) makeOutboundCall(assistantId, phone, 'Test User');
+}
+
+// ════════════════════════════════════════════════════
+// DELETE ASSISTANT
+// ════════════════════════════════════════════════════
+async function deleteAssistant(id, name) {
+  if (!confirm(`Delete assistant "${name}"?\nThis cannot be undone.`)) return;
+  try {
+    await vapiRequest('DELETE', `/assistant/${id}`);
+    STATE.assistants = STATE.assistants.filter(a => a.id !== id);
+    document.getElementById('badge-agents').textContent = STATE.assistants.length;
+    renderAgentsPage();
+    renderHome();
+    toast(`"${name}" deleted successfully.`, 'info');
+  } catch(e) {
+    let msg = e.message;
+    try { const j=JSON.parse(msg.substring(msg.indexOf('{'))); msg=j.message||msg; } catch(_){}
+    toast(`Delete failed: ${msg.slice(0,100)}`, 'err');
+  }
+}
+
+// ════════════════════════════════════════════════════
+// VIEW TRANSCRIPT
+// ════════════════════════════════════════════════════
+async function viewTranscript(callId) {
+  if (!callId || callId === 'undefined') { toast('No call ID available', 'err'); return; }
+  toast('Loading transcript...', 'info');
+  try {
+    const data = await vapiRequest('GET', `/call/${callId}`);
+    // Vapi stores transcript in different fields depending on version
+    const transcript = data.transcript
+      || data.artifact?.transcript
+      || (Array.isArray(data.messages) ? data.messages.map(m=>`${m.role}: ${m.content||m.message||''}`).join('\n') : '')
+      || 'No transcript available yet — call may still be in progress.';
+    const summary = data.summary || data.artifact?.summary || 'No summary yet.';
+    const dur = data.duration ? `${Math.floor(data.duration/60)}:${(data.duration%60).toString().padStart(2,'0')}` : 'N/A';
+    alert(`📞 Call Details\n\nDuration: ${dur}\nStatus: ${data.status||'unknown'}\n\nSUMMARY:\n${summary}\n\n──────────────\nTRANSCRIPT:\n${transcript.slice(0,2000)}`);
+  } catch(e) {
+    let msg = e.message;
+    try { const j=JSON.parse(msg.substring(msg.indexOf('{'))); msg=j.message||msg; } catch(_){}
+    toast(`Could not load transcript: ${msg.slice(0,80)}`, 'err');
+  }
+}
+
+// ════════════════════════════════════════════════════
+// CAMPAIGN LAUNCHER
+// ════════════════════════════════════════════════════
+function showCampaignLauncher() {
+  renderCampaigns();
+  const el = document.getElementById('camp-launcher');
+  if (el) el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+
+async function launchCampaign() {
+  const name    = document.getElementById('cl-name').value.trim();
+  const asst    = document.getElementById('cl-assistant').value;
+  const raw     = document.getElementById('cl-contacts').value.trim();
+
+  if (!name || !asst || !raw) { toast('Fill in all fields', 'err'); return; }
+  if (!CFG.hasVapi || !CFG.vapiPhone) {
+    toast('Add Vapi key + Phone Number ID first', 'err');
+    document.getElementById('cfg-banner').style.display = 'flex';
+    return;
+  }
+
+    const contacts = raw.split('\n').map(line => {
+      const parts = line.split(',');
+      let phone = (parts[0]||'').trim().replace(/\s/g,'');
+      if (phone && !phone.startsWith('+')) phone = '+91' + phone;
+      return { phone, name: (parts[1]||'Customer').trim() };
+    }).filter(c => c.phone && c.phone.length >= 10);
+
+  if (!contacts.length) { toast('No valid phone numbers found. Use format: +91XXXXXXXXXX,Name', 'err'); return; }
+
+  toast(`🚀 Launching campaign to ${contacts.length} contacts...`, 'info', 4000);
+
+  let success = 0, failed = 0;
+  for (const contact of contacts) {
+    try {
+      await vapiRequest('POST', '/call/phone', {
+        assistantId: asst,
+        phoneNumberId: CFG.vapiPhone,
+        customer: { number: contact.phone, name: contact.name },
+      });
+      success++;
+      await new Promise(r => setTimeout(r, 300)); // small delay
+    } catch(e) { failed++; }
+  }
+
+  // Add to campaigns list
+  STATE.campaigns.unshift({
+    id: Date.now(), name, meta:`${contacts.length} contacts`,
+    pct: Math.round(success/contacts.length*100),
+    color:'var(--blue)', status:'Running', emoji:'🎯'
+  });
+
+  toast(`✅ Campaign launched! ${success} calls started, ${failed} failed.`, 'ok', 6000);
+  document.getElementById('camp-launcher').style.display = 'none';
+  renderCampaigns();
+}
+
+// ════════════════════════════════════════════════════
+// CREATE ASSISTANT PAGE — PICKERS
+// ════════════════════════════════════════════════════
+const personalities = [
+  { emoji:'🤝', name:'Professional', desc:'Formal, trusted' },
+  { emoji:'😊', name:'Friendly',     desc:'Warm, conversational' },
+  { emoji:'⚡', name:'Efficient',    desc:'Direct, fast' },
+  { emoji:'💬', name:'Empathetic',   desc:'Patient, caring' },
+  { emoji:'🎯', name:'Sales',        desc:'Persuasive' },
+  { emoji:'🛡️', name:'Compliance',  desc:'Careful, accurate' },
+];
+const voices = [
+  { emoji:'👩', name:'Priya',  lang:'Hindi · Female',  bg:'rgba(30,142,240,.1)',  id:'Priya'  },
+  { emoji:'👨', name:'Arjun',  lang:'Hindi · Male',    bg:'rgba(15,207,176,.1)',  id:'Arjun'  },
+  { emoji:'👩', name:'Aria',   lang:'English · Female',bg:'rgba(34,201,122,.1)',  id:'Aria'   },
+  { emoji:'👨', name:'James',  lang:'English · Male',  bg:'rgba(251,191,36,.1)', id:'James'  },
+];
+
+function initPickers() {
+  const pg = document.getElementById('pers-picker');
+  if (pg && !pg.children.length) {
+    personalities.forEach((p,i) => {
+      const d = document.createElement('div');
+      d.className = 'pc2'+(i===0?' sel':'');
+      d.innerHTML=`<div class="pe">${p.emoji}</div><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>`;
+      d.onclick=()=>{ document.querySelectorAll('.pc2').forEach(c=>c.classList.remove('sel')); d.classList.add('sel'); };
+      pg.appendChild(d);
+    });
+  }
+  const vg = document.getElementById('voice-picker');
+  if (vg && !vg.children.length) {
+    voices.forEach((v,i) => {
+      const d = document.createElement('div');
+      d.className = 'vc'+(i===0?' sel':'');
+      d.dataset.voice = v.id;
+      d.innerHTML=`<div class="vc-av" style="background:${v.bg};">${v.emoji}</div><div><div class="vc-n">${v.name}</div><div class="vc-l">${v.lang}</div></div>`;
+      d.onclick=()=>{ document.querySelectorAll('.vc').forEach(c=>c.classList.remove('sel')); d.classList.add('sel'); };
+      vg.appendChild(d);
+    });
+  }
+}
+
+function updatePreviewName(val) {
+  const n = val || 'Your Assistant';
+  ['prev-name','prev-name2','prev-name3'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.textContent=n;
+  });
+}
+
+// ════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  setDate();
+  initPickers();
+  renderHome();
+  updateIntegrationStatus();
+
+  // Load existing keys from session
+  const k = sessionStorage.getItem('vapi_key');
+  const su = sessionStorage.getItem('supa_url');
+  if (k) {
+    document.getElementById('inp-vapi').value = '●●●●●●●●';
+    if (su) document.getElementById('inp-supa-url').value = su;
+    loadLiveData();
+  }
+});
+</script>
+</body>
+</html>
